@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         display = findViewById(R.id.input);
         display.setShowSoftInputOnFocus(false);
     }
+
     private void buttonUpdate(String strToAdd){
         String oldStr = display.getText().toString();
         int cursorPos = display.getSelectionStart();
@@ -89,8 +92,22 @@ public class MainActivity extends AppCompatActivity {
     }
     public void BTNSqrt(View view){
         String val = display.getText().toString();
-        double r = Math.sqrt(Double.parseDouble(val));
-        display.setText(String.valueOf(r));
+        if (val == "Error") {
+            Toast.makeText(MainActivity.this,
+                    "You can not make operations with non-numeric symbols!",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            double valNumeric = Double.parseDouble(val);
+            double r = Math.sqrt(Double.parseDouble(val));
+            if (valNumeric < 0) {
+                Toast.makeText(MainActivity.this,
+                        "Number must be greater or equal to zero!",
+                        Toast.LENGTH_SHORT).show();
+                display.setText("Error");
+            } else {
+                display.setText(String.valueOf(r));
+            }
+        }
     }
     public void BTNMul(View view){
         buttonUpdate("*");
@@ -109,11 +126,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void BTNSignChange(View view) {
-        buttonUpdate("-");
+        if(!display.getText().toString().isEmpty()) {
+
+            double r = Double.parseDouble(String.valueOf(display.getText()));
+            r = r * (-1);
+            display.setText(String.valueOf(r));
+        }
+        else {
+            Toast.makeText(MainActivity.this,
+                    "The field is empty!",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     public void BTNEql(View view){
         String userExp = display.getText().toString();
+
         Expression exp = new Expression(userExp);
 
         String result = String.valueOf(exp.calculate());
